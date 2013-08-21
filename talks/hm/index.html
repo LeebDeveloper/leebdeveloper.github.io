@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Монады</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<style>
+			ul {align : "left"}
+			.hl {color:#00ff00;font-weight:bold;}
+		</style>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section>
+					<h2>Примерно</h2>
+					<h1>Хиндли-Милнер</h1>
+				</section>
+
+				<section>
+					<h3>Зачем нужны типы?</h3>
+					<ul>
+						
+					</ul>
+				</section>
+
+				<section>
+					<h3>Совсем простой и очевидный пример</h3>
+					<pre><code>
+x = 5
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Более продвинутый пример</h3>
+					<pre><code>
+x = 5
+y = 6
+z = x + y
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Неочевидный момент</h3>
+					<pre><code>
+# Где-то в библиотеке
+(+) :: Number -> Number -> String
+a + b = ...
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Basic idea!</h3>
+					<ul>
+						<li class="fragment">Составить систему уравнений относительно типов</li>
+						<li class="fragment">Решить систему</li>
+						<li class="fragment">???</li>
+						<li class="fragment">Profit!</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Классификация алгоритмов вывода типов</h3>
+					<ul>
+						<li class="fragment">Подстановка (substitution / unification based)</li>
+						<li class="fragment">Ограничение (constraint based)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Алгоритм Хиндли-Милнера</h3>
+					<ul>
+						<li class="fragment">
+							Окружение
+						</li>
+						<li class="fragment">
+							Схемы типизаций
+							<ul>
+								<li class="fragment" style="list-style-type:none">Переменных</li>
+								<li class="fragment" style="list-style-type:none">Абстракций</li>
+								<li class="fragment" style="list-style-type:none">Аппликаций</li>
+							</ul>
+						</li>
+						<li class="fragment">
+							Унификация
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Окружение</h3>
+					<ul>
+						<li>Сборник ограничений вида <span class="hl">x:&alpha; y:&beta;</span></li>
+						<li>... и уравнений <span class="hl">&alpha;=&beta;</span></li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h3>Правило для переменных</h3>
+					<ul>
+						<li>Не нашли в окружении &mdash; добавили новое ограничение</li>
+						<li>Нашли &mdash; оставили все как есть</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Правило для абстракций</h3>
+					<ul>
+						<li>Рекурсивно вывести тип для тела абстракции</li>
+						<li>Применили правила к аргументам</li>
+						<li>Добавили ограничение для идентификатора функции в окружение <span class="hl">foo : &alpha;&rarr;&beta;</span></li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Правило для аппликаций</h3>
+					<ul>
+						<li>Вывести типы для аргументов</li>
+						<li>Вывести тип для функции (вынуть из окружения)</li>
+						<li>Унифицировать типы аргументов и тип функции</li>
+					</ul>
+				</section>
+
+				
+				<section>
+					<h3>Унификация</h3>
+					<ul>
+						<li class="fragment">
+							Тип
+							<ul>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Тип:</span> унифицируются при совпадении (Number и Number), в противном случае ошибка</li>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Типовая переменная:</span> заменяется конкретным типом (который унифицировался этой переменной)</li>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Функция:</span> унифицируется только если тип функциональный и они совместимы (Num&rarr;Num и Num&rarr;Num)</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Унификация</h3>
+					<ul>
+						<li>
+							Типовая переменная
+							<ul>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Тип:</span> переменная заменяется этим типом</li>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Типовая переменная:</span> все вхождения одной типовой переменной заменяются другой</li>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Функция:</span> тип переменной заменяется на тип функции</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Унификация</h3>
+					<ul>
+						<li>
+							Функция
+							<ul>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Тип:</span> унифицируется только если тип функциональный и они совместимы (Num&rarr;Num и Num&rarr;Num)</li>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Типовая переменная:</span> тип переменной заменяется на тип функции (если типовой переменной нет в составе функции)</li>
+								<li class="fragment" style="list-style-type:none"><span class="hl">Функция:</span> унифицируется только если унифицируются аргументы и возвращаемые значения</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Альтернативы</h3>
+					<ul>
+						<li class="fragment">Algorithm M</li>
+						<li class="fragment">Wand algorithm</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Почитать еще</h2>
+					<ul>
+						<li><a href="http://rsdn.ru/article/funcprog/monad.xml">Types and Programming Languages: Benjamin C. Pierce</a></li>
+						<li><a href="http://www.win.tue.nl/~hzantema/semssm.pdf‎">Type Inference Algorithms: S. Saeidi Mobarakeh</a></li>
+						<li><a href="http://cs.anu.edu.au/~Ben.Lippmeier/project/thesis/thesis-lippmeier-sub.pdf‎">Type Inference and Optimisation for an Impure World: B Lippmeier</a></li>
+						<li><a href="http://homes.cs.washington.edu/~mernst/teaching/6.883/readings/p707-lee.pdf">Proofs about a Folklore Let-Polymorphic Type Inference Algorithm</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h1>Зе Енд</h1>
+					<p>Спрашивайте свои ответы</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					//{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					//{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					/*{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { 
+						//hljs.initHighlightingOnLoad(); 
+						hljs.highlightBlock(document.getElementById("ex1"));
+					} },*/
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
