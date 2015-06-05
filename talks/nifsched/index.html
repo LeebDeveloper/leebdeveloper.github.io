@@ -28,7 +28,8 @@
 		<style>
 			ul { align : "left" }
 			pre code.max { max-height: none; }
-			span.green { color: #17ff2e; }
+			.green { color: #17ff2e; }
+			.red { color: #ff2c2d; }
 		</style>
 
 		<!--[if lt IE 9]>
@@ -74,8 +75,10 @@
 					
 <pre><code class="erlang">-module(niftest).
 -export([init/0, hello/0]).
+
 init() ->
       erlang:load_nif("./niftest", 0).
+
 hello() ->
       "NIF library not loaded".
 </code></pre>
@@ -155,208 +158,127 @@ B15F83E0: deallocate_return_Q 0
 
 
 				<section>
-					<h3>Несколько примеров связанных вычислений</h3>
+					<h3>Какие варианты были</h3>
 					<ul>
-						<li class="fragment">Последовательные вычисления с побочными эффектами</li>
-						<li class="fragment">Вычисления с обработкой отсутствующий значений</li>
-						<li class="fragment">Вычисления с несколькими результатами</li>
+						<li class="fragment">Возвращать промежуточный результат в Erlang</li>
+						<li class="fragment">Не использовать NIF</li>
 					</ul>
 				</section>
 
 
 				<section>
-					<h3>Последовательные вычисления с побочными эффектами</h3>
-					<pre><code>
-connectToDatabase()<span class="fragment highlight-green">;</span>
-sendQuery()<span class="fragment highlight-green">;</span>
-r = receiveResult()<span class="fragment highlight-green">;</span>
-return r;
-</code></pre>
-				</section>
-
-				<section>
-					<h3>Вычисления с обработкой отсутствующих значений</h3>
-
-					<p>Оператор</p>
-					<p><span style="color: #0f0; font-weight:bold;">;</span></p>
-					<p>Семантика "а затем"</p>
+					<h3>Что изменилось</h3>
+					<ul>
+						<li class="fragment">Можно запланировать продолжения вычисления</li>
+						<li class="fragment">Можно перенести вычисление в "грязный" планировщик</li>
+					</ul>
 				</section>
 
 
 				<section>
-					<h3>Вычисления с обработкой отсутствующих значений</h3>
-					<pre><code>
-File f = open("keys.txt");
-<span class="fragment highlight-red">if (f == null)
-  return null;</span>
-
-String key = readLine(f);
-<span class="fragment highlight-red">if (keys == null)
-  return null;</span>
-
-String value = ourDatabase.get(key);
-<span class="fragment highlight-red">if (value == null)
-  return null;</span>
-
-return "The value is: " + value;
-
-</code></pre>
+					<h4>Могучая функция <a href="http://www.erlang.org/doc/man/erl_nif.html#enif_schedule_nif">enif_schedule_nif</a></h4>
+					<pre><code>ERL_NIF_TERM enif_schedule_nif(
+  <span class="fragment highlight-green">ErlNifEnv* env, </span>
+  <span class="fragment highlight-green">const char* fun_name, </span>
+  <span class="fragment highlight-green">int flags, </span>
+  <span class="fragment highlight-green">ERL_NIF_TERM (*fp)(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[]), </span>
+  <span class="fragment highlight-green">int argc, </span>
+  <span class="fragment highlight-green">const ERL_NIF_TERM argv[]</span>)</code></pre>
 				</section>
+				
 
 				<section>
-					<h3>Вычисления с обработкой отсутствующих значений</h3>
-
-					<p>Оператор</p>
-					<p><span style="color: #0f0; font-weight:bold;">;?</span></p>
-					<p>Семантика "а затем, если получилось"</p>
-				</section>
-
-				<section>
-					<h3>Вычисления с обработкой отсутствующих значений</h3>
-
-	<pre><code>
-File f = open("keys.txt") <span style="color: #0f0; font-weight:bold">;?</span>
-
-String key = readLine(f) <span style="color: #0f0; font-weight:bold">;?</span>
-
-String value = ourDatabase.get(key) <span style="color: #0f0; font-weight:bold">;?</span>
-
-return "The value is: " + value;
-
-</code></pre>
-				</section>
-
-				<section>
-					<h3>Вычисления с несколькими результатами</h3>
-
-<pre><code>
-int sum = 0;
-foreach(Shop s : getShops()) 
+					<h4>Откладываем вычисления</h4>
+					<pre class="fragment"><code class="max">...
+static ERL_NIF_TERM hello(ErlNifEnv* env, 
+	int argc, const ERL_NIF_TERM argv[])
 {
-  foreach(Department d : getDepartments(s)) 
-    foreach(Order ord : getOrders(d)) 
-      sum += ord.getCost();
+    return enif_schedule_nif(env, "hello_cont", 0, hello_cont, argc, argv);
 }
-return sum;
+
+static ERL_NIF_TERM hello_cont(ErlNifEnv* env, int 
+	argc, const ERL_NIF_TERM argv[])
+{
+    return enif_make_string(env, "Hello world!", ERL_NIF_LATIN1);
+}
+...
+</code></pre>
+
+<pre class="fragment"><code>1> niftest:init().
+ok
+2> niftest:hello().
+"Hello world!"
 </code></pre>
 				</section>
 
 				<section>
-					<h3>Вычисления с несколькими результатами</h3>
+					<h3>Как же так получилось?</h3>
 
-					<p>Оператор</p>
-					<p><span style="color: #0f0; font-weight:bold;">;*</span></p>
-					<p>Семантика "для каждого результата предыдущей операции"</p>
-				</section>
-
-				<section>
-					<h3>Вычисления с несколькими результатами</h3>
-
-<pre><code>
-int sum = 0;
-Shop s &lt;- getShops() <span style="color: #0f0; font-weight:bold">;*</span>
-Department d &lt;- getDepartments(s) <span style="color: #0f0; font-weight:bold">;*</span>
-Order ord &lt;- getOrders(d) <span style="color: #0f0; font-weight:bold">;*</span>
-sum += ord.getCost();
-return sum;
+					<i>erl_process.h</i>
+					<pre><code>struct process {
+  ...
+  <span class="fragment highlight-green">BeamInstr* cp; /* (untagged) Continuation pointer (for threaded code). */</span>
+  <span class="fragment highlight-green">BeamInstr* i;  /* Program counter for threaded code. */</span>
+  ...
+  <span class="fragment highlight-green">Uint freason;  /* Reason for detected failure */</span>
+  ...
+  <span class="fragment highlight-green">ErtsPSD *psd;  /* Rarely used process specific data */</span>
+  ...
+};
 </code></pre>
 				</section>
 
+				<section>
+					<h3>Как же так получилось</h3>
+
+					<div>
+					<i>erl_nif.c</i>
+					<pre><code>typedef struct {
+    <span class="fragment highlight-green">Export exp;</span>
+    struct erl_module_nif* m;
+    <span class="fragment highlight-green">NativeFunPtr fp;</span>
+    Eterm saved_mfa[3];
+    int saved_argc;
+    int alloced_argv_sz;
+    Eterm argv[1];
+} NifExport;
+</code></pre>
+</div>
+
+<div class="fragment">
+<i>export.h</i>
+<pre><code>typedef struct export
+{
+    <span class="fragment highlight-green">void* addressv[ERTS_NUM_CODE_IX];</span>
+    BeamInstr fake_op_func_info_for_hipe[2];
+    <span class="fragment highlight-green">BeamInstr code[5];</span>
+} Export;
+</code></pre>
+</div>
+				</section>
+
 
 				<section>
-					<h3>Что общего?</h3>
-					<p>Между <span style="color: #0f0; font-weight:bold">;</span> , 
-						<span style="color: #0f0; font-weight:bold">;?</span> и 
-						<span style="color: #0f0; font-weight:bold">;*</span></p>
+					<h3>Вместо тысячи слов</h3>
+					<img style="border:none;background:none;box-shadow:none;" src="images/process.svg" />
+				</section>
+
+				<section>
+					<h3>Немного о "грязных" планировщиках</h3>
 
 					<ul>
-						<li class="fragment">Не занимаются вычислениями</li>
-						<li class="fragment">Не зависят от типов значений</li>
-						<li class="fragment">Вообще-то, имеют одинаковый тип</li>
+						<li class="fragment">Дополнительные треды для специальных процессов</li>
+						<li class="fragment">Бывают IO-bound и CPU-bound</li>
+						<li class="fragment">Экспериментальная фича</li>
 					</ul>
 				</section>
 
-
 				<section>
-					<h3>Тип? Какой тип?</h3>
-					<img src="images/whattype.gif"/>
-				</section>
-
-				<section>
-					<h3>Тип >=</h3>
-					<p class="fragment fade-out">a -&gt; (a -&gt; b) -&gt; b</p>
-					<p class="fragment roll-in">m a -&gt; (m a -&gt; m b) -&gt; m b</p>
-				</section>
-
-				<section>
-					<p class="fragment grow">(&gt;&gt;=) :: <span style="color:#0f0;">m a -&gt; (a -&gt; m b) -&gt; m b</span></p>
-				</section>
-
-				<section>
-					<h3>Монада &mdash; это тройка</h3>
+					<h3>Место для выводов</h3>
 					<ul>
-						<li class="fragment">m &mdash; полиморфный тип с одним аргументом (Maybe a, IO a, etc.)</li>
-						<li class="fragment">(&gt;&gt;=) :: m a -&gt; (a -&gt; m b) -&gt; m b</li>
-						<li class="fragment">return :: a -&gt; m a</li>
-					</ul>
-				</section>
-
-				<section>
-					<h3>Так что с побочкой?</h3>
-					<p>Любые побочные эффекты = явные действия над "миром"</p>
-					<pre id="ex1"><code>
-main :: World -> World
-main w0 =
-    let (v1,w1) = action1 w0 in
-    let (v2,w2) = action2 v1 w1 in
-    let (v3,w3) = action3 v2 w2 in
-    action4 v3 w3
-					</code></pre>
-				</section>
-
-				<section>
-					<h3>Перепишем с помощью bind</h3>
-					<pre id="ex1"><code>
-main :: World -> World
-main w0 =
-    action1 >>= action2 >>= action3 >>= action4
-					</code></pre>
-				</section>
-
-				<section>
-					<h3>Несколько трюков</h3>
-					<p>Введем тип</p>
-					<pre><code>data IO a = IO {unIO :: State# RealWorld -> (# State# RealWorld, a #)}</code></pre>
-					<p class="fragment">Разбавим все синтаксичесим сахаром: do-notation</p>
-				</section>
-
-				<section>
-					<h3>Моя прелесть</h3>
-					<pre id="ex1"><code>
- main :: IO () ; потому что main всегда возвращает "ничего"
- main = do
-  v1 &lt;- action1
-  v2 &lt;- action2 v1
-  v3 &lt;- action3 v2
-  action4 v3
- 
-					</code></pre>
-				</section>
-
-				<section>
-					<h3>Шокирующая правда</h3>
-					<p class="fragment roll-in">В Haskell список</p>
-					<p class="fragment roll-in">является</p>
-					<p class="fragment roll-in">МОНАДОЙ</p>
-				</section>
-
-				<section>
-					<h2>Почитать еще</h2>
-					<ul>
-						<li><a href="http://rsdn.ru/article/funcprog/monad.xml">По большей части то же самое, но длиннее и сложнее</a></li>
-						<li><a href="http://habrahabr.ru/post/183150/">В картинках и на русском</a></li>
-						<li><a href="http://habrahabr.ru/post/153383/">Очень подробно и доходчиво про IO</a></li>
-						<li><a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.6497">An Introduction to Category Theory, Category Theory Monads, and Their Relationship to Functional Programming</a></li>
+						<p class="fragment roll-in green">Позволяют держать в чистоте код на Э.</p>
+						<p class="fragment roll-in green">Снижают оверхед на кодирование-декодирование промежуточных данных</p>
+						<p class="fragment roll-in red">Ещё один конкурирующий "стандарт"</p>
 					</ul>
 				</section>
 
