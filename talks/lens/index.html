@@ -59,9 +59,9 @@
 					<h2>Как часто с вами случалось это?</h2>
 					<p>
 						<pre><code data-trim contenteditable>
-data Point = Point {x :: Int, y :: Int} deriving(Show)
-data Unit = Unit {pos :: Point, health :: Int} deriving(Show)
-data Game = Game {player :: Unit} deriving(Show)
+data Point = Point {x :: Int, y :: Int}
+data Unit = Unit {pos :: Point, health :: Int}
+data Game = Game {player :: Unit}
 						</code></pre>
 					</p>
 				</section>
@@ -70,15 +70,15 @@ data Game = Game {player :: Unit} deriving(Show)
 					<h2>Как часто с вами случалось это?</h2>
 					<p>
 						<pre><code data-trim contenteditable>
-data Point = Point {x :: Int, y :: Int} deriving(Show)
-data Unit = Unit {pos :: Point, health :: Int} deriving(Show)
-data Game = Game {player :: Unit} deriving(Show)
+data Point = Point {x :: Int, y :: Int}
+data Unit = Unit {pos :: Point, health :: Int}
+data Game = Game {player :: Unit}
 
 updatePlayerX game newX = newGame
-	where
-		newPos = (pos.player $ game) {x = newX}
-		newPlayer = (player game) {pos = newPos}
-		newGame = game {player = newPlayer}
+    where
+        newPos = (pos.player $ game) {x = newX}
+        newPlayer = (player game) {pos = newPos}
+        newGame = game {player = newPlayer}
 						</code></pre>
 					</p>
 				</section>
@@ -93,11 +93,11 @@ case class Unit(pos: Point, health: Int)
 case class Game(player: Unit)
 
 val newGame = game.copy(
-	player = game.player.copy(
-		pos = game.player.pos.copy(
-			x = newX
-		)
-	)
+    player = game.player.copy(
+        pos = game.player.pos.copy(
+            x = newX
+        )
+    )
 )
 						</code></pre>
 					</p>
@@ -109,7 +109,7 @@ val newGame = game.copy(
 					<p>
 						<pre><code data-trim contenteditable>
 -record(point, {x :: integer(), y :: integer()}).
--record(unit,  {pos :: point(),   health :: integer()}).
+-record(unit,  {pos :: point(), health :: integer()}).
 -record(game,  {player :: unit()}).
 
 NewPos = Game#game.player#player.pos#point{x = NewX},
@@ -197,8 +197,8 @@ Player {pos = Point {x = 1, y = 2}, health = 20}
 						<pre><code data-trim contenteditable>
 healthLens :: Lens Unit Int
 healthLens = Lens health 
-			(\a s -> s { health = a })
-			(\f s -> s { health = f (health a) })
+		(\a s -> s { health = a })
+		(\f s -> s { health = f (health a) })
 						</code></pre>
 					</p>
 				</section>
@@ -447,22 +447,31 @@ Game {player = Unit
 					<h2>Об имплементациях</h2>
 					<h3>Haskell ftw</h3>
 					<ul>
-						<li>No order here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-						<li>Or here</li>
+						<li class="fragment"><a href="https://github.com/ekmett/lens">lens</a></li>
+						<li class="fragment"><a href="https://github.com/aelve/microlens">microlens</a></li>
+						<li class="fragment"><a href="https://github.com/michaelt/lens-simple">lens-simple</a></li>
+						<li class="fragment"><a href="http://hackage.haskell.org/package/basic-lens">basic-lens</a></li>
 					</ul>
 				</section>
 
 
 				<section>
-					<h2>Не Haskell-ем единым</h2>
+					<h2>Об имплементациях</h2>
 					<h3>Scala догоняет</h3>
 					<ul>
 						<li>scalaz.Lens</li>
-						<li>Quicklens</li>
-						<li>Sauron</li>
-						<li>Monocle</li>
+						<li><a href="https://github.com/adamw/quicklens">Quicklens</a></li>
+						<li><a href="https://github.com/pathikrit/sauron">Sauron</a></li>
+						<li><a href="http://julien-truffaut.github.io/Monocle/">Monocle</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Что почитать</h2>
+					<ul>
+						<li><a href="http://www.haskellforall.com/2013/05/program-imperatively-using-haskell.html">Program imperatively using Haskell lenses</a></li>
+						<li><a href="http://artyom.me/lens-over-tea-1">Lens over tea</a></li>
+						<li><a href="http://anonyplog.logdown.com/posts/292173-lens-in-scala">Lens in scala</a></li>
 					</ul>
 				</section>
 
