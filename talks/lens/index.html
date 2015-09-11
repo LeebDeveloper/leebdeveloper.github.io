@@ -6,8 +6,8 @@
 
 		<title>Линзы</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="История о том, как простая идея позволяет героически преодолевать проблему, которая программистам на императивных языках и не снилась.">
+		<meta name="author" content="Игнат Толчанов">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -198,7 +198,7 @@ Player {pos = Point {x = 1, y = 2}, health = 20}
 healthLens :: Lens Unit Int
 healthLens = Lens health 
 		(\a s -> s { health = a })
-		(\f s -> s { health = f (health a) })
+		(\f s -> s { health = f (health s) })
 						</code></pre>
 					</p>
 				</section>
