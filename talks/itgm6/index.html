@@ -30,9 +30,26 @@
 		</script>
 
 		<style>
+			section {
+				text-align: left;
+			}
+
+			section.center {
+				text-align: center;
+			}
+
 			code {
-				font-size: 25px !important;
-				line-height: 28px !important;
+				font-size: 27px !important;
+				line-height: 36px !important;
+			}
+
+			span.fragment.strikedout {
+				visibility: visible  !important;
+				opacity: 1  !important;
+			}
+
+			span.fragment.strikedout.visible {
+				text-decoration: line-through;
 			}
 		</style>
 
@@ -51,6 +68,238 @@
 					<p>
 						<small><a href="http://https://plus.google.com/+%D0%98%D0%B3%D0%BD%D0%B0%D1%82%D0%A2%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%BE%D0%B2">Игнат Толчанов</a> / <a href="http://twitter.com/LeebDeveloper">@leebdeveloper</a></small>
 					</p>
+				</section>
+
+
+				<section class="center">
+					<h2>Типичный Э...</h2>
+					<img src="images/homeless.jpg" title="Типичный Erlang-программист" />
+				</section>
+
+
+				<section>
+					<h1>Что плохого в Erlang?</h1>
+				</section>
+
+				
+				<section>
+					<h2>Иммутабельность /<br/> single assignment</h2>
+				</section>
+
+
+				<section>
+					<pre><code data-trim contenteditable>1> List = [1,2,3,4,5]. 
+[1,2,3,4,5]
+					</code></pre>
+				</section>
+
+
+				<section>
+					<pre><code data-trim contenteditable>1> List = [1,2,3,4,5]. 
+[1,2,3,4,5]
+2> tl(List).          
+[2,3,4,5]
+					</code></pre>
+				</section>
+
+
+				<section>
+					<pre><code data-trim contenteditable>1> List = [1,2,3,4,5]. 
+[1,2,3,4,5]
+2> tl(List).
+[2,3,4,5]
+3> List.
+[1,2,3,4,5]
+					</code></pre>
+				</section>
+
+
+				<section>
+					<pre><code data-trim contenteditable>1> List = [1,2,3,4,5]. 
+[1,2,3,4,5]
+2> tl(List).
+[2,3,4,5]
+3> List.
+[1,2,3,4,5]
+4> List = tl(List).
+					</code></pre>
+				</section>
+
+				<section>
+					<pre><code data-trim contenteditable>1> List = [1,2,3,4,5]. 
+[1,2,3,4,5]
+2> tl(List).
+[2,3,4,5]
+3> List.
+[1,2,3,4,5]
+4> List = tl(List).
+** exception error: no match 
+   of right hand side value [2,3,4,5]
+					</code></pre>
+				</section>
+
+
+				<section class="center">
+					<img title="Кому пришла в голову эта идея?" src="images/wat-pigeon.jpeg" />
+				</section>
+
+
+				<section>
+					<h2>Share nothing</h2>
+				</section>
+
+
+				<section class="center">
+					<img src="images/no-share-joey.gif" title="Джо не делится едой" />
+				</section>
+
+
+				<section>
+					<ul>
+						<li>У каждого процесса свои данные</li>
+						<li class="fragment">Единственный способ поделиться &mdash; скопировать</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Простейший синтаксис</h2>
+				</section>
+
+				<section>
+					<ul>
+						<li>3.5 конструкции</li>
+						<li>никакой выразительности</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Erlang</h2>
+					<pre><code data-trim contenteditable>Line = io:get_line("> "),
+{Int, _} = string:to_intger(Line),
+NewInt = Int * 100,
+io:write(NewInt)
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Язык Х</h2>
+					<pre><code data-trim contenteditable>getLine >>= print . (* 100) . read
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h2>Интерпретатор</h2>
+				</section>
+
+				<section class="center">
+					<img src="images/snail.gif" title="Snail Erlang" /></li>
+				</section>
+
+
+				<section>
+					<h2>Java, Scala, Go, язык Х впереди</h2>
+				</section>
+
+
+				<section>
+					<h1>Что хорошего в Erlang?</h1>
+				</section>
+
+
+				<section>
+					<h2>Иммутабельность /<br/> single assignment</h2>
+				</section>
+
+				<section>
+					<ul>
+						<li><span class="fragment strikedout">Присваивание</span><span class="fragment"> Связывание</span></li>
+						<li class="fragment">Элегантный pattern-matching</li>
+						<li class="fragment">Можно написать NIF</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Erlang</h2>
+					<pre><code data-trim contenteditable class="erlang">
+in_list(X, [X | _]) -> true;
+in_list(X, [_ | L]) -> in_list(X, L);
+in_list(_, [])      -> false.
+
+...
+
+case in_list(3, [1, 3, 5, 7]) of
+	true  -> ...;
+	false -> ...
+end.
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h2>Share nothing</h2>
+				</section>
+
+
+				<section>
+					<ul>
+						<li>У каждого процесса свои данные</li>
+						<li class="fragment">Единственный способ поделиться &mdash; скопировать</li>
+					</ul>
+				</section>
+
+				
+				<section>
+					<h2>Per-process GC</h2>
+				</section>
+
+
+				<section>
+					<h2>Простейший синтаксис</h2>
+				</section>
+
+				
+				<section>
+					<ul>
+						<li>Легко осваивается</li>
+						<li>Go и Java это не помешало</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Интерпретатор</h2>
+				</section>
+
+
+				<section>
+					<ul>
+						<li>Честный preemptive multitasking</li>
+						<li class="fragment">Облегчение интроспекции</li>
+						<li class="fragment">Если всё же медленно, можно написать NIF...</li>
+						<li class="fragment">... или использовать HiPE</li>
+					</ul>
+				</section>					
+
+
+
+				<section>
+					<h1>Кроме того</h1>
+					<ul>
+						<li class="fragment">Чумовое сетевое IO</li>
+						<li class="fragment">Работа с бинарными данными</li>
+						<li class="fragment">Интроспекция<span class="fragment"> (лучше только в Lisp)</span></li>
+						<li class="fragment">Links / monitors / supervisors</li>
+						<li class="fragment">"Let it crash"<span class="fragment"> done right</span></li>
+						<li class="fragment">OTP</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Erlang придумали инженеры, которые хотели спать по ночам</h2>
 				</section>
 
 
