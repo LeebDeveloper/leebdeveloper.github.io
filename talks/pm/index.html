@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Inside pattern matching</title>
+
+		<meta name="description" content="Talk about pattern matching machinery in functional languages">
+		<meta name="author" content="Игнат Толчанов">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="../reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../reveal.js/css/theme/night.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="../reveal.js/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? '../reveal.js/css/print/pdf.css' : '../reveal.js/css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<style>
+			section {
+				text-align: left;
+			}
+
+			section.center {
+				text-align: center;
+			}
+
+			code.big {
+				font-size: 27px !important;
+				line-height: 36px !important;
+			}
+
+			span.fragment.strikedout {
+				visibility: visible  !important;
+				opacity: 1  !important;
+			}
+
+			span.fragment.strikedout.visible {
+				text-decoration: line-through;
+			}
+
+			img.dia {
+				background: none !important;
+				border: none !important;
+				box-shadow: none !important;
+			}
+		</style>
+
+		<!--[if lt IE 9]>
+		<script src="../reveal.js/lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h2>Сопоставление с образцом изнутри</h2>
+					<p>
+						<small><a href="http://https://plus.google.com/+%D0%98%D0%B3%D0%BD%D0%B0%D1%82%D0%A2%D0%BE%D0%BB%D1%87%D0%B0%D0%BD%D0%BE%D0%B2">Игнат Толчанов</a> / <a href="http://twitter.com/LeebDeveloper">@leebdeveloper</a></small>
+					</p>
+				</section>
+
+
+
+				<section class="center">
+					<h3>Простой пример</h3>
+					<pre><code data-trim contenteditable class="big">case e of {
+    C1 (C2, C3) => 1,
+    C1 (x, C4) => 2,
+    C1 (x, C5) => 3,
+    x => 4
+}
+					</code></pre>
+				</section>
+
+				<section class="center">
+					<h3>... понятным языком</h3>
+					<pre><code data-trim contenteditable class="haskell big">case e of
+    (2, 3) -> 1
+    (x, 4) -> 2
+    (x, 5) -> 3
+    x -> 4
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h3>Автоматы</h3>
+					<ul>
+						<li class="fragment">Decision tree</li>
+						<li class="fragment">Decision DAG</li>
+						<li class="fragment">Backtracking automaton</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h3>Но есть нюансы</h3>
+					<ul>
+						<li class="fragment">В строгих языках &mdash; любой порядок</li>
+						<li class="fragment">В ленивых языках &mdash; сложности</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h3>Decision Tree</h3>
+					<img src="images/lr.png" title="Decision Tree" class="dia" />
+				</section>
+
+
+				<section>
+					<h3>Оптимизация дерева</h3>
+					<ul>
+						<li class="fragment">Может быть NP-трудной</li>
+						<li class="fragment">Эвристики</li>
+					</ul>
+				</section>
+				
+
+				<section>
+					<h3>Алгоритм компиляции</h3>
+					<div style="position:relative; width:906px; height:537px; margin:0 auto;">
+						<img src="images/algo.png" title="Match compilation algo" class="fragment fade-out dia" data-fragment-index="0" style="position:absolute;top:0;left:0;" width="906" height="537" />
+						<img src="images/algo_hl.png" title="Match compilation algo" class="fragment fade-in dia" data-fragment-index="0" style="position:absolute;top:0;left:0;" width="906" height="537" />
+					</div>
+				</section>
+
+				
+				<section>
+					<h3>Эвристики</h3>
+					<ul>
+						<li class="fragment">Left to Right</li>
+						<li class="fragment">Small Branching Factor</li>
+						<li class="fragment">Large Branching Factor</li>
+						<li class="fragment">Relevance</li>
+						<li class="fragment">Small Defaults</li>
+						<li class="fragment">Fewer Child Rules</li>
+					</ul>
+					<div class="fragment" style="margin-top:20px;">
+						<a href="http://www.cs.virginia.edu/~techrep/CS-2000-13.pdf">When Do Match-Complation Heuristics Matter</a>
+					</div>
+				</section>
+
+				
+				<section>
+					<h3>Left to Right</h3>
+					<img src="images/lr.png" title="Left to right" class="dia" />
+				</section>
+
+
+				<section>
+					<h3>Large Branching Factor</h3>
+					<img src="images/lbf.png" title="Large Branching Factor" class="dia" />
+				</section>
+
+				<section>
+					<h3>Erlang</h3>
+					<pre><code class="erlang big">-module (pm).
+-compile(export_all).
+
+my(E) -> 
+    case E of
+        {2, 3} -> 1;
+        {X, 4} -> 2;
+        {X, 5} -> 3;
+        X -> 4
+    end.</code></pre>
+				</section>
+
+				<section>
+					<h3>Erlang</h3>
+					<pre><code class="bash">&gt; erlc +"'S'" +"no_line_info" pm.erl</code></pre>
+					<pre class="fragment"><code class="erlang" style="max-height:580px;">{function, my, 1, 2}.
+  {label,1}.
+    {func_info,{atom,pm},{atom,my},1}.
+  {label,2}.
+    {test,is_tuple,{f,6},[{x,0}]}.
+    {test,test_arity,{f,6},[{x,0},2]}.
+    {get_tuple_element,{x,0},0,{x,1}}.
+    {get_tuple_element,{x,0},1,{x,2}}.
+    {test,is_eq_exact,{f,3},[{x,1},{integer,2}]}.
+    {test,is_eq_exact,{f,3},[{x,2},{integer,3}]}.
+    {move,{integer,1},{x,0}}.
+    return.
+  {label,3}.
+    {test,is_integer,{f,6},[{x,2}]}.
+    {select_val,{x,2},{f,6},{list,[{integer,5},{f,4},{integer,4},{f,5}]}}.
+  {label,4}.
+    {move,{integer,3},{x,0}}.
+    return.
+  {label,5}.
+    {move,{integer,2},{x,0}}.
+    return.
+  {label,6}.
+    {move,{integer,4},{x,0}}.
+    return.</code></pre>
+				</section>
+
+
+				<section>
+					<h3>Erlang</h3>
+					<pre><code class="erlang-repl">&gt; erts_debug:df(pm).</code></pre>
+					<pre class="fragment"><code class="x86asm">B19E11A4: i_func_info_IaaI 0 talk my 1 
+B19E11B8: is_tuple_of_arity_frA f(B19E1220) x(0) 2 
+B19E11C4: extract_next_element2_x x(1) 
+B19E11CC: i_is_eq_exact_immed_fxc f(B19E11F4) x(1) 2 
+B19E11DC: i_is_eq_exact_immed_fxc f(B19E11F4) x(2) 3 
+B19E11EC: move_return_cr 1 x(0) 
+B19E11F4: i_jump_on_val_xfII x(2) f(B19E1220) 2 4 f(B19E1218) f(B19E1210) 
+B19E1210: move_return_cr 3 x(0) 
+B19E1218: move_return_cr 2 x(0) 
+B19E1220: move_return_cr 4 x(0) </code></pre>
+				</section>
+
+
+				<section>
+					<h3>Haskell</h3>
+					<pre><code class="haskell big">module PM where
+
+my :: (Int, Int) -> Int
+my e =
+    case e of
+        (2, 3) -> 1
+        (x, 4) -> 2
+        (x, 5) -> 3
+        x -> 4</code></pre>
+				</section>
+
+				<section>
+					<h3>Haskell</h3>
+					<pre><code class="bash">&gt; ghc -ddump-ds pm.hs</code></pre>
+					<pre class="fragment"><code class="haskell" style="max-height:580px; overflow:hidden;">Talk.my :: (GHC.Types.Int, GHC.Types.Int) -> GHC.Types.Int
+[LclIdX]
+Talk.my =
+  \ (e_aeI :: (GHC.Types.Int, GHC.Types.Int)) ->
+    case e_aeI of _ { (ds_dkp, ds_dkq) ->
+    let {
+      fail_dkx :: GHC.Prim.State# GHC.Prim.RealWorld -> GHC.Types.Int
+      [LclId]
+      fail_dkx =
+        \ _ ->
+          case ds_dkq of _ { GHC.Types.I# ds_dkt ->
+          case ds_dkt of _ {
+            __DEFAULT -> (\ _ -> GHC.Types.I# 4) GHC.Prim.realWorld#;
+            4 -> GHC.Types.I# 2;
+            5 -> GHC.Types.I# 3
+          }
+          } } in
+    case ds_dkp of _ { GHC.Types.I# ds_dkr ->
+    case ds_dkr of _ {
+      __DEFAULT -> fail_dkx GHC.Prim.realWorld#;
+      2 ->
+        case ds_dkq of _ { GHC.Types.I# ds_dks ->
+        case ds_dks of _ {
+          __DEFAULT -> fail_dkx GHC.Prim.realWorld#;
+          3 -> GHC.Types.I# 1
+        }
+        }
+    }
+    }
+    }</code></pre>
+				</section>
+
+
+				<section>
+					<h3>Elm compiler</h3>
+					<a href="https://github.com/elm-lang/elm-compiler/blob/master/src/Optimize/DecisionTree.hs#L406-L417">src/Optimize/DecisionTree.hs</a>
+					<pre><code class="haskell">...
+
+pickPath :: VariantDict -> [Branch] -> Path
+pickPath variantDict branches =
+  let
+    allPaths =
+      Maybe.mapMaybe isChoicePath (concatMap _patterns branches)
+  in
+    case bests (addWeights (smallDefaults branches) allPaths) of
+      [path] ->
+          path
+
+      tiedPaths ->
+          head (bests (addWeights 
+                        (smallBranchingFactor variantDict branches) 
+                        tiedPaths))
+
+...
+					</code></pre>
+				</section>
+
+
+				<section>
+					<h3>Elm</h3>
+					<pre><code class="haskell big">module PM where
+
+my : (Int, Int) -> Int
+my e =
+    case e of
+        (2, 3) -> 1
+        (x, 4) -> 2
+        (x, 5) -> 3
+        x -> 4
+</code></pre>
+				</section>
+
+
+				<section>
+					<h3>Elm</h3>
+					<pre><code class="bash">&gt; elm-make pm.elm</code></pre>
+					<pre class="fragment"><code class="javascript" style="max-height:580px; overflow:hidden;">var my = function (e) {
+  return function () {
+    switch (e.ctor)
+    {
+      case "_Tuple2": 
+        switch (e._0)
+        {
+          case 2: 
+            switch (e._1)
+            {
+                case 3: return 1;
+            }
+            break;
+        }
+        switch (e._1)
+        {
+          case 4: return 2;
+          case 5: return 3;
+        }
+        break;
+    }
+    return 4;
+  }();
+};</code></pre>
+				</section>
+
+
+
+				
+
+
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<h3>Спрашивайте свои ответы</h3>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="../reveal.js/lib/js/head.min.js"></script>
+		<script src="../reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: '../reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					//{ src: '../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../reveal.js/plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../reveal.js/plugin/zoom-js/zoom.js', async: true },
+					{ src: '../reveal.js/plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
