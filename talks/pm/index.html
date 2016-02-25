@@ -152,10 +152,8 @@
 						<li class="fragment">Relevance</li>
 						<li class="fragment">Small Defaults</li>
 						<li class="fragment">Fewer Child Rules</li>
+						<li class="fragment">...</li>
 					</ul>
-					<div class="fragment" style="margin-top:20px;">
-						<a href="http://www.cs.virginia.edu/~techrep/CS-2000-13.pdf">When Do Match-Complation Heuristics Matter</a>
-					</div>
 				</section>
 
 				
@@ -348,9 +346,85 @@ my e =
 };</code></pre>
 				</section>
 
+				<section>
+					<h3>Бонус: binary pattern matching</h3>
+					<pre class="fragment"><code class="erlang" style="max-height:620px; font-size: 12px">-module (pm).
+-compile(export_all).
 
+my(E) ->
+    case E of
+        &lt;&lt;2, 3&gt;&gt; -> 1;
+        &lt;&lt;X, 4&gt;&gt; -> 2;
+        &lt;&lt;X, 5&gt;&gt; -> 3;
+        X -> 4
+    end.</code></pre>
+				</section>
 
-				
+				<section>
+					<h3>Бонус: binary pattern matching</h3>
+					<pre><code class="erlang" style="max-height:620px; font-size: 12px">{function, my, 1, 2}.
+  {label,1}.
+    {func_info,{atom,pm},{atom,my},1}.
+  {label,2}.
+    {test,bs_start_match2,{f,7},1,[{x,0},1],{x,0}}.
+    {test,bs_get_integer2,{f,7},1,
+          [{x,0},{integer,8},1,{field_flags,[{anno,[6,{file,"pm.erl"}]},unsigned,big]}],{x,1}}.
+    {bs_save2,{x,0},0}.
+    {test,is_eq_exact,{f,4},[{x,1},{integer,2}]}.
+    {test,bs_match_string,{f,4},[{x,0},8,{string,[3]}]}.
+    {test,bs_test_tail2,{f,3},[{x,0},0]}.
+    {move,{integer,1},{x,0}}.
+    return.
+  {label,3}.
+    {bs_restore2,{x,0},0}.
+  {label,4}.
+    {test,bs_get_integer2,{f,7},2,
+          [{x,0},{integer,8},1,{field_flags,[{anno,[7,{file,"pm.erl"}]},unsigned,big]}],{x,2}}.
+    {test,is_integer,{f,7},[{x,2}]}.
+    {select_val,{x,2},{f,7},{list,[{integer,5},{f,5},{integer,4},{f,6}]}}.
+  {label,5}.
+    {test,bs_test_tail2,{f,7},[{x,0},0]}.
+    {move,{integer,3},{x,0}}.
+    return.
+  {label,6}.
+    {test,bs_test_tail2,{f,7},[{x,0},0]}.
+    {move,{integer,2},{x,0}}.
+    return.
+  {label,7}.
+    {move,{integer,4},{x,0}}.
+    return.</code></pre>
+				</section>
+
+				<section>
+					<h3>Для домашнего чтения</h3>
+					<ul>
+						<li class="fragment">
+							<a href="www.cs.virginia.edu/~techrep/CS-2000-13.pdf" title="When Do Match-Compilation Heuristics Matter?">
+								K. Scott and N. Ramsey. When Do Match-Compilation Heuristics Matter?
+							</a>
+						</li>
+						<li class="fragment">
+							<a href="http://moscova.inria.fr/~maranget/papers/ml05e-maranget.pdf" title="Compiling Pattern Matching to good Decision Trees">
+								L. Maranget. Compiling Pattern Matching to good Decision Trees
+							</a>
+						</li>
+						<li class="fragment">
+							<a href="http://moscova.inria.fr/~maranget/papers/opt-pat.ps.gz" title="Optimizing Pattern Matching">
+								F. Le Fessant, L. Maranget. Optimizing Pattern Matching
+							</a>
+						</li>
+						<li class="fragment">
+							<a href="http://pauillac.inria.fr/~maranget/papers/lazy-pat1.ps.gz" title="Compiling Lazy Pattern Matching">
+								L. Maranget. Compiling Lazy Pattern Matching
+							</a>
+						</li>
+						<li class="fragment">
+							<a href="user.it.uu.se/~pergu/papers/esop04.pdf" title="Adaptive Pattern Matching on Binary Data">
+								P. Gustafsson and K. Sagonas. Adaptive Pattern Matching on Binary Data
+							</a>
+						</li>
+					</ul>
+				</section>
 
 
 				<section style="text-align: left;">
