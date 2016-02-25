@@ -168,6 +168,15 @@
 					<img src="images/lbf.png" title="Large Branching Factor" class="dia" />
 				</section>
 
+
+				<section>
+					<h3>Erlang</h3>
+					<div style="margin-bottom:20px;">lib/compiler/src/v3_kernel.erl</div>
+					<a href="https://github.com/erlang/otp/blob/maint/lib/compiler/src/v3_kernel.erl#L948-L972">
+						This code implements the algorithm for an optimizing compiler for pattern matching given "The Implementation of Functional Programming Languages" by Simon Peyton Jones. 
+					</a>
+				</section>
+
 				<section>
 					<h3>Erlang</h3>
 					<pre><code class="erlang big">-module (pm).
@@ -225,6 +234,22 @@ B19E11F4: i_jump_on_val_xfII x(2) f(B19E1220) 2 4 f(B19E1218) f(B19E1210)
 B19E1210: move_return_cr 3 x(0) 
 B19E1218: move_return_cr 2 x(0) 
 B19E1220: move_return_cr 4 x(0) </code></pre>
+				</section>
+
+
+				<section>
+					<h3>Haskell</h3>
+					<div style="margin-bottom:20px;">compiler/deSugar/Match.hs</div>
+					<div>
+						<a href="https://github.com/ghc/ghc/blob/master/compiler/deSugar/Match.hs#L60-L62">
+							The function <i>match</i> is basically the same as in the Wadler chapter, except it is monadised, to carry around the name supply, info about annotations, etc.
+						</a>
+					</div>
+					<div style="margin-top:50px;">
+						<small>
+							&gt; <a href="http://research.microsoft.com/en-us/um/people/simonpj/papers/slpj-book-1987/slpj-book-1987.pdf">Simon L. Peyton Jones. The Implementation of Functional Programming Languages</a>
+						</small>
+					</div>
 				</section>
 
 
