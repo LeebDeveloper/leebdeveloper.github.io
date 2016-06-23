@@ -79,16 +79,45 @@
 
 
 				<section>
-					<h2>Краткое содержание</h2>
+					<h2>Поговорим о:</h2>
 					<ol>
-						<li class="fragment">Код</li>
-						<li class="fragment">Процесс</li>
-						<li class="fragment">Планировщик</li>
-						<li class="fragment">Сборщик мусора</li>
+						<li class="fragment">Процессах</li>
+						<li class="fragment">Портах</li>
+						<li class="fragment">Сборщике мусора</li>
+						<li class="fragment">Планировщике</li>
 						<li class="fragment">Разное</li>
 					</ol>
 				</section>
 
+				<section>
+					<h2>Процесс</h2>
+				</section>
+
+				<section>
+					<h2>Процесс: код</h2>
+					<li class="fragment">Прямой шитый код</li>
+				</section>
+
+				<section>
+					<h2>Процесс: данные</h2>
+					<img src="images/procmem.png" title="Process memory layout" class="fragment" />
+				</section>
+
+				<section>
+					<h2>Порт</h2>
+				</section>
+
+				<section>
+					<h2>Сборщик мусора</h2>
+					<li class="fragment">Когда стек и куча "встречаются"</li>
+					<li class="fragment">Если не помогло, увеличиваем кучу</li>
+				</section>
+
+				<section>
+					<h2>Сборщик мусора</h2>
+					<li class="fragment">Generational</li>
+					<li class="fragment">Fullsweep</li>
+				</section>
 
 				<section>
 					<h2>Планировщик</h2>
@@ -126,8 +155,23 @@
 					<h2>Балансировка: Миграция</h2>
 					<li class="fragment">Task stealing плохо справляется с уплотнением загрузки</li>
 					<li class="fragment">Пути миграции задач учитывают множество параметров</li>
-					<li class="fragment">Пути периодически пересчитываются</li>
+					<li class="fragment">Пути периодически пересчитываются (20-40k редукций)</li>
 					<li class="fragment">Хранится история последних 7 балансировок</li>
+				</section>
+
+				<section>
+					<h2>Разное: Пул асинхронных потоков</h2>
+				</section>
+
+				<section>
+					<h2>Разное: Таймеры</h2>
+					<li class="fragment">Time wheel</li>
+					<li class="fragment">Гарантия снизу</li>
+				</section>
+
+				<section>
+					<h2>Разное: Таймеры</h2>
+					Картинка про Time Wheel
 				</section>
 
 				<section style="text-align: left;">
