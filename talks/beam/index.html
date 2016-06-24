@@ -52,7 +52,7 @@
 				text-decoration: line-through;
 			}
 
-			img.dia {
+			img {
 				background: none !important;
 				border: none !important;
 				box-shadow: none !important;
@@ -85,12 +85,25 @@
 						<li class="fragment">Портах</li>
 						<li class="fragment">Сборщике мусора</li>
 						<li class="fragment">Планировщике</li>
-						<li class="fragment">Разное</li>
+						<li class="fragment">Разном</li>
 					</ol>
 				</section>
 
 				<section>
 					<h2>Процесс</h2>
+					<ul>
+						<li class="fragment">Спавнится на том же планировщике</li>
+						<li class="fragment">
+							Прекращает исполнение, когда
+							<ul>
+								<li>закончился бюджет редукций</li>
+								<li>receive не может вернуть сообщение</li>
+								<li>происходит bif trap</li>
+								<li>занят вызываемый порт</li>
+							</ul>
+						</li>
+						<li class="fragment">Вытесняется планировщиком</li>
+					</ul>
 				</section>
 
 				<section>
@@ -105,6 +118,18 @@
 
 				<section>
 					<h2>Порт</h2>
+					<ul>
+						<li class="fragment">Спавнится на том же планировщике</li>
+						<li class="fragment">Планируется не все активности</li>
+						<li class="fragment">
+							Прекращает исполнение, когда
+							<ul>
+								<li>закончился бюджет редукций</li>
+								<li>закончатся таски</li>
+							</ul>
+						</li>
+						<li class="fragment">Не вытесняется планировщиком</li>
+					</ul>
 				</section>
 
 				<section>
@@ -120,11 +145,25 @@
 				</section>
 
 				<section>
+					<h2>Сборщик мусора</h2>
+					<img src="images/gc_before.jpg" title="Before GC" />
+				</section>
+
+				<section>
+					<h2>Сборщик мусора</h2>
+					<img src="images/gc_after.jpg" title="After GC" />
+				</section>
+
+				<section>
 					<h2>Планировщик</h2>
-					<li class="fragment">Полу-автономная виртуальная машина</li>
 					<li class="fragment">Один на поток</li>
 					<li class="fragment">Своя собственная очередь запуска</li>
 					<li class="fragment">Работает максимально независимо</li>
+				</section>
+
+				<section class="center">
+					<h2>Планировщик</h2>
+					<img src="images/run_queues.png" title="Run queue" style="width:750px;" />
 				</section>
 
 				<section>
@@ -146,9 +185,19 @@
 					<li class="fragment">Сделать нагрузку как можно более компактной</li>
 				</section>
 
-				<section>
+				<section class="center">
 					<h2>Балансировка: Task stealing</h2>
-					Картинки про Task stealing
+					<img src="images/stealing1.png" style="width:650px;" />
+				</section>
+
+				<section class="center">
+					<h2>Балансировка: Task stealing</h2>
+					<img src="images/stealing2.png" style="width:650px;" />
+				</section>
+
+				<section class="center">
+					<h2>Балансировка: Task stealing</h2>
+					<img src="images/stealing3.png" style="width:650px;" />
 				</section>
 
 				<section>
@@ -161,6 +210,8 @@
 
 				<section>
 					<h2>Разное: Пул асинхронных потоков</h2>
+					<li class="fragment">Работают похожим образом на обычный планировщик</li>
+					<li class="fragment">Нужны для долгих задач</li>
 				</section>
 
 				<section>
@@ -169,9 +220,24 @@
 					<li class="fragment">Гарантия снизу</li>
 				</section>
 
-				<section>
+				<section class="center">
 					<h2>Разное: Таймеры</h2>
-					Картинка про Time Wheel
+					<img src="images/twlinear.png" style="width:400px;"/>
+				</section>
+
+				<section class="center">
+					<h2>Разное: Таймеры</h2>
+					<img src="images/twcircular.gif" style="width:400px;"/>
+				</section>
+
+				<section>
+					<h2>Ссылки и подробности</h2>
+					<li><a href="https://www.youtube.com/watch?v=tBAM_N9qPno">Lukas Larsson - Understanding the Erlang Scheduler</a></li>
+					<li><a href="http://kth.diva-portal.org/smash/get/diva2:392243/FULLTEXT01.pdf">Characterizing the Scalability of Erlang VM on Many-core Processors</a></li>
+					<li><a href="http://www.erlang-factory.com/upload/presentations/708/HitchhikersTouroftheBEAM.pdf">Hitchhiker’s Tour of the BEAM</a></li>
+					<li><a href="https://www.erlang-solutions.com/blog/erlang-19-0-garbage-collector.html">Erlang 19.0 Garbage Collector</a></li>
+					<li><a href="https://hamidreza-s.github.io/erlang%20garbage%20collection%20memory%20layout%20soft%20realtime/2015/08/24/erlang-garbage-collection-details-and-why-it-matters.html">Erlang Garbage Collection Details and Why It Matters</a></li>
+					<li><a href="https://github.com/erlang/otp/blob/maint/erts/emulator/beam/">BEAM sources</a></li>
 				</section>
 
 				<section style="text-align: left;">
