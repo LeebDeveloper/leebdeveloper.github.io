@@ -77,21 +77,143 @@
 				</section>
 
 
+				<section class="center">
+					<h2>Edwin Brady</h2>
+					<img src="images/brady.jpg" title="Edwin Brady" alt="Edwin Brady" />
+				</section>
+
 
 				<section>
+					<h2>Как так вышло?</h2>
+					<li class="fragment"><a href="http://sneezy.cs.nott.ac.uk/darcs/DTP08/">Dependently Typed Programming 2008</a></li>
+					<li class="fragment">2008 год: первая версия на основе Ivor</li>
+					<li class="fragment">2011 год: всё переделал</li>
+				</section>
+
+
+				<section>
+					<h2>The Goal</h2>
+					<h3 class="fragment">Создать практичный язык общего назначения с зависимыми типами</h3>
+				</section>
+
+
+				<section class="center">
+					<h2>The Book</h2>
+					<img src="images/idris-book.png" title="Type Driven Development Book" alt="Type Driven Development Book" style="height:550px;" />
+				</section>
+
+				<section>
+					<h3>Как выглядит практичный язык с зависимыми типами?</h3>
+					<pre class="fragment" ><code data-trim class="haskell" style="max-height:600px !important;">
+module Main
+
+data BTree a = Leaf
+             | Node (BTree a) a (BTree a)
+
+insert : Ord a => a -> BTree a -> BTree a
+insert x Leaf = Node Leaf x Leaf
+insert x (Node l v r) = if (x < v) then (Node (insert x l) v r)
+                                   else (Node l v (insert x r))
+
+toList : BTree a -> List a
+toList Leaf = []
+toList (Node l v r) = toList l ++ (v :: toList r)
+
+toTree : Ord a => List a -> BTree a
+toTree [] = Leaf
+toTree (x :: xs) = insert x (toTree xs)
+
+main : IO ()
+main = do let t = toTree [1,8,2,7,9,3]
+          print (toList t)
+          			</code></pre>
+				</section>
+
+
+				<section>
+					<h2>Как в Haskell</h2>
+					<li class="fragment">Синтаксис (ну почти)</li>
+					<li class="fragment">(G)ADT (ну почти)</li>
+					<li class="fragment">Классы типов (ну почти)</li>					
+					<li class="fragment">IO</li>
+					<li class="fragment">Короче, почти всё <img src="images/trollface.png" style="width: 100px; vertical-align:middle;" /></li>
+				</section>
+
+				
+				<section>
+					<h2>НЕ как в Haskell</h2>
+					<li class="fragment">Двоеточия и стрелочки</li>
+					<li class="fragment">Энергичный</li>
+					<li class="fragment">Зависимые типы</li>
+				</section>
+
+
+				<section class="center">
 					<h2>λ-куб</h2>
-					<img src="images/lambda-cube.png" title="λ-куб" alt="λ-куб" class="center" />
+					<img src="images/lambda-cube.png" title="λ-куб" alt="λ-куб" />
+				</section>
+
+
+				<section>
+					<h2>Неявные аргументы</h2>
+					<pre class="fragment"><code data-trim class="haskell">
+isEmpty : Vect n a -> Bool
+isEmpty {n = Z} _   = True
+isEmpty {n = S k} _ = False
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>First-class types</h2>
+					<pre class="fragment"><code data-trim class="haskell">
+adder 0 : Int -> Int
+adder 1 : Int -> Int -> Int
+adder 2 : Int -> Int -> Int -> Int
+...
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>First-class types</h2>
+					<pre class="fragment"><code data-trim class="haskell">
+AdderType : (numargs : Nat) -> Type
+AdderType Z = Int
+AdderType (S k) = (next : Int) -> AdderType k
+					</code></pre>
+					<pre class="fragment"><code data-trim class="haskell">
+adder : (numargs : Nat) -> (acc : Int) -> AdderType numargs
+adder Z acc = acc
+adder (S k) acc = \next => adder k (next + acc)
+					</code></pre>
+				</section>
+
+				
+				<section>
+					<h2>First-class types</h2>
+					<pre class="fragment"><code data-trim class="haskell">
+sendQuery : (queryString : String) -> QueryType queryString
+					</code></pre>
+					<pre class="fragment"><code data-trim class="haskell">
+...
+(name, age) &lt;- sendQuery "SELECT name, age FROM employee WHERE id = @id" id
+...
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Что ещё хорошего</h2>
+					<li class="fragment">Проверка тотальности функций</li>
+					<li class="fragment">Расширения синтаксиса (Поддержка написания EDSL)</li>
+					<li class="fragment">Интерактивное доказательство теорем</li>
+					<li class="fragment">FFI</li>
+					<li class="fragment">Разные бэкэнды для компиляции (С, JS, Java, LLVM, Erlang)</li>
 				</section>
 
 
 				<section>
 					<h2>Ссылки и подробности</h2>
-					<li><a href="https://www.youtube.com/watch?v=tBAM_N9qPno">Lukas Larsson - Understanding the Erlang Scheduler</a></li>
-					<li><a href="http://kth.diva-portal.org/smash/get/diva2:392243/FULLTEXT01.pdf">Characterizing the Scalability of Erlang VM on Many-core Processors</a></li>
-					<li><a href="http://www.erlang-factory.com/upload/presentations/708/HitchhikersTouroftheBEAM.pdf">Hitchhiker’s Tour of the BEAM</a></li>
-					<li><a href="https://www.erlang-solutions.com/blog/erlang-19-0-garbage-collector.html">Erlang 19.0 Garbage Collector</a></li>
-					<li><a href="https://hamidreza-s.github.io/erlang%20garbage%20collection%20memory%20layout%20soft%20realtime/2015/08/24/erlang-garbage-collection-details-and-why-it-matters.html">Erlang Garbage Collection Details and Why It Matters</a></li>
-					<li><a href="https://github.com/erlang/otp/blob/maint/erts/emulator/beam/">BEAM sources</a></li>
+					<li><a href="http://www.idris-lang.org/">http://www.idris-lang.org/</a></li>
+					<li><a href="https://www.manning.com/books/type-driven-development-with-idris">Type-Driven Development with Idris</a></li>
 				</section>
 
 				<section style="text-align: left;">
